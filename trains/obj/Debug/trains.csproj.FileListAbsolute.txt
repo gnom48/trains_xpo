@@ -1,0 +1,38 @@
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\trains.exe.config
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\trains.exe
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\trains.pdb
+C:\Users\Egorc\Desktop\trains\trains\obj\Debug\trains.csproj.AssemblyReference.cache
+C:\Users\Egorc\Desktop\trains\trains\obj\Debug\trains.csproj.SuggestedBindingRedirects.cache
+C:\Users\Egorc\Desktop\trains\trains\obj\Debug\trains.csproj.CoreCompileInputs.cache
+C:\Users\Egorc\Desktop\trains\trains\obj\Debug\trains.exe
+C:\Users\Egorc\Desktop\trains\trains\obj\Debug\trains.pdb
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\EntityFramework.dll
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\EntityFramework.xml
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Egorc\Desktop\trains\trains\obj\Debug\trains.csproj.CopyComplete
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\EPPlus.dll
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\EPPlus.xml
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\resources\Data.xml
+C:\Users\Egorc\Desktop\trains\trains\bin\Debug\resources\report.xlsx
+C:\Users\Egorc\Desktop\trains — копия\trains\obj\Debug\trains.csproj.AssemblyReference.cache
+C:\Users\Egorc\Desktop\trains — копия\trains\obj\Debug\trains.csproj.SuggestedBindingRedirects.cache
+C:\Users\Egorc\Desktop\trains — копия\trains\obj\Debug\trains.csproj.CoreCompileInputs.cache
+C:\Users\Egorc\Desktop\trains — копия\trains\obj\Debug\trains.exe
+C:\Users\Egorc\Desktop\trains — копия\trains\obj\Debug\trains.pdb
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\resources\Data.xml
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\resources\report.xlsx
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\trains.exe.config
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\trains.exe
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\trains.pdb
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\DevExpress.Data.v24.1.dll
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\DevExpress.Xpo.v24.1.dll
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\EntityFramework.dll
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\EPPlus.dll
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\DevExpress.Data.v24.1.xml
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\DevExpress.Xpo.v24.1.xml
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\EntityFramework.xml
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Egorc\Desktop\trains — копия\trains\bin\Debug\EPPlus.xml
+C:\Users\Egorc\Desktop\trains — копия\trains\obj\Debug\trains.csproj.CopyComplete
