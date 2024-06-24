@@ -11,6 +11,8 @@ namespace trains.models
     {
         public Operation(Session session) : base(session) { }
 
+        private string operationName;
+
         /// <summary>
         /// Наименование операции
         /// </summary>
@@ -18,11 +20,11 @@ namespace trains.models
         {
             get
             {
-                return GetPropertyValue<string>(nameof(OperationName));
+                return operationName;
             }
             set
             {
-                SetPropertyValue<string>(nameof(OperationName), value);
+                SetPropertyValue<string>(nameof(OperationName), ref operationName, value);
             }
         }
 

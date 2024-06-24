@@ -11,16 +11,22 @@ namespace trains.models
     {
         public Invoice(Session session) : base(session) { }
 
-        /// <summary>
-        /// Уникальный идентификатор накладного листа
-        /// </summary>
-        [Key(true)]
-        public int InvoiceId { get; set; }
+        private string invoiceName;
 
         /// <summary>
         /// Номер накладного листа
         /// </summary>
-        public string InvoiceName { get; set; }
+        public string InvoiceName
+        {
+            get
+            {
+                return invoiceName;
+            }
+            set
+            {
+                SetPropertyValue<string>(nameof(InvoiceName), ref invoiceName, value);
+            }
+        }
 
         [Association("Invoice-Cars")]
         public XPCollection<Car> Cars => GetCollection<Car>(nameof(Cars));

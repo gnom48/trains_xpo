@@ -14,33 +14,66 @@ namespace trains.models
     {
         public History(Session session) : base(session) { }
 
-        /// <summary>
-        /// Идентификатор вагона
-        /// </summary>
-        public int CarId { get; set; }
-
-        /// <summary>
-        /// Идентификатор зафиксированной станции
-        /// </summary>
-        public int StationId { get; set; }
-
-        /// <summary>
-        /// Идентификатор операции
-        /// </summary>
-        public int OperationId { get; set; }
+        private DateTime operationDateTime;
 
         /// <summary>
         /// Дата и время операции
         /// </summary>
-        public DateTime OperationDateTime { get; set; }
+        public DateTime OperationDateTime 
+        { 
+            get 
+            {
+                return operationDateTime;
+            } 
+            set 
+            {
+                SetPropertyValue<DateTime>(nameof(OperationDateTime), ref operationDateTime, value);
+            }
+        }
+
+        private Car car;
 
         [Association("Car-Histories")]
-        public Car Car { get; set; }
+        public Car Car
+        {
+            get
+            {
+                return car;
+            }
+            set
+            {
+                SetPropertyValue<Car>(nameof(Car), ref car, value);
+            }
+        }
+
+        private Station station;
 
         [Association("Station-Histories")]
-        public Station Station { get; set; }
+        public Station Station
+        {
+            get
+            {
+                return station;
+            }
+            set
+            {
+                SetPropertyValue<Station>(nameof(Station), ref station, value);
+            }
+        }
+
+        private Operation operation;
 
         [Association("Operation-Histories")]
-        public Operation Operation { get; set; }
+        public Operation Operation
+        {
+            get
+            {
+                return operation;
+            }
+            set
+            {
+                SetPropertyValue<Operation>(nameof(Operation), ref operation, value);
+            }
+        }
     }
 }

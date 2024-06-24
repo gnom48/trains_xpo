@@ -11,6 +11,8 @@ namespace trains.models
     {
         public Car(Session session) : base(session) { }
 
+        private string carNumber;
+
         /// <summary>
         /// Номер вагона
         /// </summary>
@@ -18,44 +20,15 @@ namespace trains.models
         {
             get
             {
-                return GetPropertyValue<string>(nameof(CarNumber));
+                return carNumber;
             }
             set
             {
-                SetPropertyValue<string>(nameof(CarNumber), value);
+                SetPropertyValue<string>(nameof(CarNumber), ref carNumber, value);
             }
         }
 
-        /*
-        /// <summary>
-        /// Идентификатор накладного листа 
-        /// </summary>
-        public int InvoiceId
-        {
-            get
-            {
-                return GetPropertyValue<string>(nameof(FreightName));
-            }
-            set
-            {
-                SetPropertyValue<string>(nameof(FreightName), value);
-            }
-        }
-
-        /// <summary>
-        /// Идентификатор груза
-        /// </summary>
-        public int FreightId
-        {
-            get
-            {
-                return GetPropertyValue<string>(nameof(FreightName));
-            }
-            set
-            {
-                SetPropertyValue<string>(nameof(FreightName), value);
-            }
-        }*/
+        private int grossWeight;
 
         /// <summary>
         /// Масса брутто
@@ -64,22 +37,46 @@ namespace trains.models
         {
             get
             {
-                return GetPropertyValue<int>(nameof(GrossWeight));
+                return grossWeight;
             }
             set
             {
-                SetPropertyValue<int>(nameof(GrossWeight), value);
+                SetPropertyValue<int>(nameof(GrossWeight), ref grossWeight, value);
             }
         }
 
         [Association("Car-TrainsCars")]
         public XPCollection<TrainsCars> TrainsCars => GetCollection<TrainsCars>(nameof(TrainsCars));
 
+        private Invoice invoice;
+
         [Association("Invoice-Cars")]
-        public Invoice Invoice { get; set; }
+        public Invoice Invoice
+        {
+            get
+            {
+                return invoice;
+            }
+            set
+            {
+                SetPropertyValue<Invoice>(nameof(Invoice), ref invoice, value);
+            }
+        }
+
+        private Freight freight;
 
         [Association("Freight-Cars")]
-        public Freight Freight { get; set; }
+        public Freight Freight
+        {
+            get
+            {
+                return freight;
+            }
+            set
+            {
+                SetPropertyValue<Freight>(nameof(Freight), ref freight, value);
+            }
+        }
 
         [Association("Car-Histories")]
         public XPCollection<History> Histories => GetCollection<History>(nameof(Histories));

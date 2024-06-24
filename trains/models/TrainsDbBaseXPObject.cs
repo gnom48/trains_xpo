@@ -1,13 +1,9 @@
 ﻿using DevExpress.Xpo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace trains.models
 {
-    public class TrainsDbBaseXPObject: XPBaseObject
+    [NonPersistent]
+    public class TrainsDbBaseXPObject: XPObject
     {
         protected TrainsDbBaseXPObject(Session session): base(session) { }
     }

@@ -8,29 +8,53 @@ namespace trains.models
     /// </summary>
     public class TrainsCars: TrainsDbBaseXPObject
     {
-        public TrainsCars(Session session): base(session) {}
+        public TrainsCars(Session session): base(session) { }
 
-        /// <summary>
-        /// Идентификатор поезда
-        /// </summary>
-        [Key(true)]
-        public int TrainId { get; set; }
-
-        /// <summary>
-        /// Идентификатор вагона
-        /// </summary>
-        [Key(true)]
-        public int CarId { get; set; }
+        private int carPositionInTrain;
 
         /// <summary>
         /// Порядковый номер вагона в составе
         /// </summary>
-        public int CarPositionInTrain { get; set; }
+        public int CarPositionInTrain
+        {
+            get
+            {
+                return carPositionInTrain;
+            }
+            set
+            {
+                SetPropertyValue<int>(nameof(CarPositionInTrain), ref carPositionInTrain, value);
+            }
+        }
+
+        private Train train;
 
         [Association("Train-TrainsCars")]
-        public Train Train { get; set; }
+        public Train Train
+        {
+            get
+            {
+                return train;
+            }
+            set
+            {
+                SetPropertyValue<Train>(nameof(Train), ref train, value);
+            }
+        }
+
+        private Car car;
 
         [Association("Car-TrainsCars")]
-        public Car Car { get; set; }
+        public Car Car
+        {
+            get
+            {
+                return car;
+            }
+            set
+            {
+                SetPropertyValue<Car>(nameof(Car), ref car, value);
+            }
+        }
     }
 }

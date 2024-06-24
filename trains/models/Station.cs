@@ -15,10 +15,22 @@ namespace trains.models
     {
         public Station(Session session) : base(session) { }
 
+        private string stationName;
+
         /// <summary>
         /// Название станции
         /// </summary>
-        public string StationName { get; set; }
+        public string StationName
+        {
+            get
+            {
+                return stationName;
+            }
+            set
+            {
+                SetPropertyValue<string>(nameof(StationName), ref stationName, value);
+            }
+        }
 
         [Association("Station-Histories")]
         public XPCollection<History> Histories => GetCollection<History>(nameof(Histories));

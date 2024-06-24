@@ -1,4 +1,5 @@
 ﻿using DevExpress.Xpo;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System.Collections.Generic;
 
 namespace trains.models
@@ -14,28 +15,62 @@ namespace trains.models
         /// <summary>
         /// Номер поезда
         /// </summary>
-        public string TrainNumber { get; set; }
+        public string TrainNumber
+        {
+            get
+            {
+                return GetPropertyValue<string>(nameof(TrainNumber));
+            }
+            set
+            {
+                SetPropertyValue<string>(nameof(TrainNumber), value);
+            }
+        }
 
         /// <summary>
         /// Индекс состава
         /// </summary>
-        public string TrainIndexCombined { get; set; }
+        public string TrainIndexCombined
+        {
+            get
+            {
+                return GetPropertyValue<string>(nameof(TrainIndexCombined));
+            }
+            set
+            {
+                SetPropertyValue<string>(nameof(TrainIndexCombined), value);
+            }
+        }
 
-        /// <summary>
-        /// Идентификатор станции отправления
-        /// </summary>
-        public int FromStationId { get; set; }
-
-        /// <summary>
-        /// Идентификатор станции прибытия
-        /// </summary>
-        public int ToStationId { get; set; }
+        private Station fromStation;
 
         [Association("Station-FromTrains")]
-        public Station FromStation { get; set; }
+        public Station FromStation
+        {
+            get
+            {
+                return fromStation;
+            }
+            set
+            {
+                SetPropertyValue<Station>(nameof(Station), ref fromStation, value);
+            }
+        }
+
+        private Station toStation;
 
         [Association("Station-ToTrains")]
-        public Station ToStation { get; set; }
+        public Station ToStation
+        {
+            get
+            {
+                return toStation;
+            }
+            set
+            {
+                SetPropertyValue<Station>(nameof(Station), ref toStation, value);
+            }
+        }
 
         [Association("Train-TrainsCars")]
         public XPCollection<TrainsCars> TrainsCars => GetCollection<TrainsCars>(nameof(TrainsCars));

@@ -21,7 +21,7 @@ namespace trains
 
         static void Main(string[] args)
         {
-            TrainsDbContext.Initialize();
+            DbHelper.CreateDatabaseIfNotExists();
 
             var data = GetDataForReportByLinq("2236", "86560-725-98470");
             //GenerateExcelFileObjectFromPattern(data);
@@ -212,7 +212,8 @@ namespace trains
         /// <returns>данные натурного листа</returns>
         public static List<OutputData> GetDataForReportByLinq(string trainNumber, string trainIndexCombined)
         {
-            stopwatch.Reset();
+            return new List<OutputData>();
+            /*stopwatch.Reset();
 
             IDataLayer dataLayer = XpoDefault.GetDataLayer(TrainsDbContext.connectionString, AutoCreateOption.None);
             using (Session context = new Session(dataLayer))
@@ -314,9 +315,9 @@ namespace trains
                         TotalGroupWeight = group.Select(x => x.GrossWeight).Sum(),
                         TotalGroupCount = group.Select(x => x.CarNumber).Count(),
                         RecordsInGroup = group.OrderBy(x => x.CarPositionInTrain).ToList()
-                    }).ToList(); ;
+                    }).ToList(); 
                 }
-            }
+            }*/
         }
     
         /// <summary>

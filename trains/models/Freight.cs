@@ -11,6 +11,8 @@ namespace trains.models
     {
         public Freight(Session session) : base(session) { }
 
+        private string freightName;
+
         /// <summary>
         /// Наименование груза
         /// </summary>
@@ -18,11 +20,11 @@ namespace trains.models
         {
             get
             {
-                return GetPropertyValue<string>(nameof(FreightName));
+                return freightName;
             }
             set
             {
-                SetPropertyValue<string>(nameof(FreightName), value);
+                SetPropertyValue<string>(nameof(FreightName), ref freightName, value);
             }
         }
 

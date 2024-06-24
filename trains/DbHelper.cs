@@ -18,15 +18,19 @@ namespace trains
     /// </summary>
     public class DbHelper
     {
+        public static string connectionString = MSSqlConnectionProvider.GetConnectionString(@".\SQLEXPRESS", "trains_xpo");
+
+        public static IDataLayer dataLayer;
+
         /// <summary>
         /// Создает новую базу данных, если не существует, иначе ничего не делает
         /// </summary>
         public static void CreateDatabaseIfNotExists()
         {
-            IDataLayer dataLayer = XpoDefault.GetDataLayer(TrainsDbContext.connectionString, AutoCreateOption.DatabaseAndSchema);
-            using (Session context = new Session(dataLayer))
+            dataLayer = XpoDefault.GetDataLayer(connectionString, AutoCreateOption.DatabaseAndSchema);
+            using (var uow = new UnitOfWork(dataLayer))
             {
-                context.UpdateSchema(
+                uow.UpdateSchema(
                     typeof(Invoice), 
                     typeof(Freight), 
                     typeof(Operation), 
@@ -206,12 +210,12 @@ namespace trains
         /// </summary>
         public static void DeleteData()
         {
-            using (var context = TrainsDbContext.GetUnitOfWork())
+            using (var uow = new UnitOfWork(dataLayer))
             {
-                context.ExecuteNonQuery("TRUNCATE TABLE dbo.TrainsCars");
-                context.ExecuteNonQuery("TRUNCATE TABLE dbo.Trains");
-                context.ExecuteNonQuery("TRUNCATE TABLE dbo.Cars");
-                context.ExecuteNonQuery("TRUNCATE TABLE dbo.Histories");
+                uow.ExecuteNonQuery("TRUNCATE TABLE dbo.TrainsCars");
+                uow.ExecuteNonQuery("TRUNCATE TABLE dbo.Trains");
+                uow.ExecuteNonQuery("TRUNCATE TABLE dbo.Cars");
+                uow.ExecuteNonQuery("TRUNCATE TABLE dbo.Histories");
             }
         }
     }
