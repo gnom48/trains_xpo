@@ -21,7 +21,6 @@ namespace trains
         static void Main(string[] args)
         {
             DbHelper.CreateDatabaseIfNotExists();
-            //DbHelper.LoadDataFromXml();
 
             var data = GetDataForReportBySqlQuery("2236", "86560-725-98470");
             GenerateExcelFileObjectFromPattern(data);

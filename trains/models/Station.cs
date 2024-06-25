@@ -14,7 +14,7 @@ namespace trains.models
     public class Station: BaseXPObject
     {
         public Station(Session session) : base(session) { }
-        public Station() { }
+        public Station() : base() { }
 
         private string stationName;
 

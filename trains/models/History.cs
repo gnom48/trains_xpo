@@ -13,7 +13,6 @@ namespace trains.models
     public class History: BaseXPObject
     {
         public History(Session session) : base(session) { }
-        public History() { }
 
         private DateTime operationDateTime;
 
@@ -34,6 +33,9 @@ namespace trains.models
 
         private Car car;
 
+        /// <summary>
+        /// Вагон
+        /// </summary>
         [Association("Car-Histories")]
         public Car Car
         {
@@ -49,6 +51,9 @@ namespace trains.models
 
         private Station station;
 
+        /// <summary>
+        /// Станция
+        /// </summary>
         [Association("Station-Histories")]
         public Station Station
         {
@@ -64,6 +69,9 @@ namespace trains.models
 
         private Operation operation;
 
+        /// <summary>
+        /// Операция над вагоном
+        /// </summary>
         [Association("Operation-Histories")]
         public Operation Operation
         {

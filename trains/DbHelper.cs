@@ -31,6 +31,7 @@ namespace trains
             
             using (var uow = new UnitOfWork(dataLayer))
             {
+                // обновление связей и структуры таблиц если они не соответствуют последнему состоянию
                 uow.UpdateSchema(
                     typeof(Invoice), 
                     typeof(Freight), 
@@ -68,13 +69,13 @@ namespace trains
                 root.Rows = root.Rows.OrderBy(x => x.TrainNumber).ThenBy(x => x.TrainIndexCombined).ThenBy(x => x.CarNumber).ThenByDescending(x => DateTime.Parse(x.WhenLastOperation)).ToList();
             }
 
+            // отбор уникальных вхождений объектов для исключения занесения в базу данных дублирующих записей
             var uniqueCarsNums = root.Rows.Select(x => x.CarNumber).OrderBy(x => x).ToList();
             uniqueCarsNums = uniqueCarsNums.Distinct().ToList();
             var uniqueTrainsNums = root.Rows.Select(x => $"{x.TrainNumber}_{x.TrainIndexCombined}").OrderBy(x => x).ToList();
             uniqueTrainsNums = uniqueTrainsNums.Distinct().ToList();
             var uniqueTrainsCarsNums = root.Rows.Select(x => $"{x.CarNumber}_{x.TrainNumber}_{x.TrainIndexCombined}").ToList();
             uniqueTrainsCarsNums = uniqueTrainsCarsNums.Distinct().ToList();
-
 
             var freights = new List<Freight>();
             var operations = new List<Operation>();
@@ -100,6 +101,7 @@ namespace trains
 
             using (var uow = new UnitOfWork(dataLayer))
             {
+                // запись справочников в базу данных
                 freights.ForEach(x => { var tmp = new Freight(uow); tmp.FreightName = x.FreightName; });
                 operations.ForEach(x => { var tmp = new Operation(uow); tmp.OperationName = x.OperationName; });
                 invoices.ForEach(x => { var tmp = new Invoice(uow); tmp.InvoiceName = x.InvoiceName; });
@@ -109,6 +111,7 @@ namespace trains
                 // заполнение зависимых таблиц
                 foreach (var r in root.Rows)
                 {
+                    // проверка на не дублирующиеся записи
                     if (uniqueCarsNums.Contains(r.CarNumber))
                     {
                         new Car(uow)
@@ -121,6 +124,7 @@ namespace trains
                         uniqueCarsNums.Remove(r.CarNumber);
                     }
 
+                    // проверка на не дублирующиеся записи
                     if (uniqueTrainsNums.Contains($"{r.TrainNumber}_{r.TrainIndexCombined}"))
                     {
                         new Train(uow)
@@ -139,6 +143,7 @@ namespace trains
                 // заполнение смежной таблицы
                 foreach (var r in root.Rows)
                 {
+                    // проверка на не дублирующиеся записи
                     if (uniqueTrainsCarsNums.Contains($"{r.CarNumber}_{r.TrainNumber}_{r.TrainIndexCombined}"))
                     {
                         new TrainsCars(uow)
@@ -153,6 +158,7 @@ namespace trains
 
                 uow.CommitChanges();
 
+                // заполнение таблицы истории операций с вагонами
                 var tmp_carss = uow.Query<Car>().ToList();
                 var tmp_operations = uow.Query<Operation>().ToList();
                 var tmp_stations = uow.Query<Station>().ToList();

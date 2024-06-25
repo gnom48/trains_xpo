@@ -10,7 +10,7 @@ namespace trains.models
     public class Freight: BaseXPObject
     {
         public Freight(Session session) : base(session) { }
-        public Freight() { }
+        public Freight(): base() { }
 
         private string freightName;
 

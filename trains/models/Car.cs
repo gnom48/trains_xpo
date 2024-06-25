@@ -10,7 +10,6 @@ namespace trains.models
     public class Car: BaseXPObject
     {
         public Car(Session session) : base(session) { }
-        public Car() { }
 
         private string carNumber;
 
@@ -51,6 +50,9 @@ namespace trains.models
 
         private Invoice invoice;
 
+        /// <summary>
+        /// Накладная
+        /// </summary>
         [Association("Invoice-Cars")]
         public Invoice Invoice
         {
@@ -66,6 +68,9 @@ namespace trains.models
 
         private Freight freight;
 
+        /// <summary>
+        /// Груз
+        /// </summary>
         [Association("Freight-Cars")]
         public Freight Freight
         {

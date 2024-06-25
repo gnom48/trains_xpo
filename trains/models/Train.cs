@@ -11,7 +11,6 @@ namespace trains.models
     public class Train: BaseXPObject
     {
         public Train(Session session) : base(session) { }
-        public Train() { }
 
         /// <summary>
         /// Номер поезда
@@ -45,6 +44,9 @@ namespace trains.models
 
         private Station fromStation;
 
+        /// <summary>
+        /// Станция отправления
+        /// </summary>
         [Association("Station-FromTrains")]
         public Station FromStation
         {
@@ -60,6 +62,9 @@ namespace trains.models
 
         private Station toStation;
 
+        /// <summary>
+        /// Станция прибытия
+        /// </summary>
         [Association("Station-ToTrains")]
         public Station ToStation
         {

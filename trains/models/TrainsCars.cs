@@ -11,7 +11,6 @@ namespace trains.models
     public class TrainsCars: BaseXPObject
     {
         public TrainsCars(Session session): base(session) { }
-        public TrainsCars() { }
 
         private int carPositionInTrain;
 
@@ -32,6 +31,9 @@ namespace trains.models
 
         private Train train;
 
+        /// <summary>
+        /// Поезд
+        /// </summary>
         [Association("Train-TrainsCars")]
         public Train Train
         {
@@ -47,6 +49,9 @@ namespace trains.models
 
         private Car car;
 
+        /// <summary>
+        /// Вагон
+        /// </summary>
         [Association("Car-TrainsCars")]
         public Car Car
         {

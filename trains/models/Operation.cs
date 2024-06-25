@@ -10,7 +10,7 @@ namespace trains.models
     public class Operation: BaseXPObject
     {
         public Operation(Session session) : base(session) { }
-        public Operation() { }
+        public Operation() : base() { }
 
         private string operationName;
 

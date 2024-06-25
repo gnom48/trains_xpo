@@ -10,7 +10,7 @@ namespace trains.models
     public class Invoice: BaseXPObject
     {
         public Invoice(Session session) : base(session) { }
-        public Invoice() { }
+        public Invoice() : base() { }
 
         private string invoiceName;
 
