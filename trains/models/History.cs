@@ -10,9 +10,10 @@ namespace trains.models
     /// Класс History
     /// представляет собой модель данный с информацией о истории операций и перемещения вагонов по станциям
     /// </summary>
-    public class History: TrainsDbBaseXPObject
+    public class History: BaseXPObject
     {
         public History(Session session) : base(session) { }
+        public History() { }
 
         private DateTime operationDateTime;
 

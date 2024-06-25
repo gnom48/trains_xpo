@@ -7,9 +7,10 @@ namespace trains.models
     /// Класс Operation
     /// представляет собой модель данный с информацией об операциях над вагонами
     /// </summary>
-    public class Operation: TrainsDbBaseXPObject
+    public class Operation: BaseXPObject
     {
         public Operation(Session session) : base(session) { }
+        public Operation() { }
 
         private string operationName;
 

@@ -11,9 +11,10 @@ namespace trains.models
     /// Класс Station
     /// представляет собой модель данных с информацией о железнодорожных станциях
     /// </summary>
-    public class Station: TrainsDbBaseXPObject
+    public class Station: BaseXPObject
     {
         public Station(Session session) : base(session) { }
+        public Station() { }
 
         private string stationName;
 

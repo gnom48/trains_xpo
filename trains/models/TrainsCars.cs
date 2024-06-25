@@ -1,4 +1,6 @@
 ﻿using DevExpress.Xpo;
+using DevExpress.Xpo.Metadata;
+using System;
 
 namespace trains.models
 {
@@ -6,9 +8,10 @@ namespace trains.models
     /// Класс TrainsCars
     /// представляет собой модель данных с информацией о состветствии между поездами-составами и вагонами
     /// </summary>
-    public class TrainsCars: TrainsDbBaseXPObject
+    public class TrainsCars: BaseXPObject
     {
         public TrainsCars(Session session): base(session) { }
+        public TrainsCars() { }
 
         private int carPositionInTrain;
 

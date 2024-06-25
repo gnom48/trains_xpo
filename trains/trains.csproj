@@ -59,13 +59,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="code\TrainsCarsComparer.cs" />
-    <Compile Include="code\TrainsComparer.cs" />
     <Compile Include="DbHelper.cs" />
     <Compile Include="models\OutputData.cs" />
     <Compile Include="models\Root.cs" />
     <Compile Include="models\SelectResult.cs" />
-    <Compile Include="models\TrainsDbBaseXPObject.cs" />
+    <Compile Include="models\BaseXPObject.cs" />
     <Compile Include="models\Car.cs" />
     <Compile Include="models\Freight.cs" />
     <Compile Include="models\History.cs" />

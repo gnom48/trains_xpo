@@ -14,6 +14,22 @@
     <FreightEtsngName>УГОЛЬ КАМЕННЫЙ МАРКИ Т-ТОЩИЙ</FreightEtsngName>
     <FreightTotalWeightKg>74700</FreightTotalWeightKg>
   </row>
+
+  <row>
+    <TrainNumber>2236</TrainNumber>
+    <TrainIndexCombined>86560-725-98470</TrainIndexCombined>
+    <FromStationName>САРБАЛА</FromStationName>
+    <ToStationName>НАХОДКА (ЭКСП.)</ToStationName>
+    <LastStationName>ЧЕРНОРЕЧЕНСКАЯ</LastStationName>
+    <WhenLastOperation>30.06.2019 14:07:00</WhenLastOperation>
+    <LastOperationName>ОТПРАВЛЕНИЕ  ВАГОНА В СОСТАВЕ ПОЕЗДА СО СТАНЦИИ</LastOperationName>
+    <InvoiceNum>ЭЛ598121</InvoiceNum>
+    <PositionInTrain>0</PositionInTrain>
+    <CarNumber>10000000</CarNumber>
+    <FreightEtsngName>КОКС</FreightEtsngName>
+    <FreightTotalWeightKg>77777</FreightTotalWeightKg>
+  </row>
+  
   <row>
     <TrainNumber>2168</TrainNumber>
     <TrainIndexCombined>86560-925-98570</TrainIndexCombined>

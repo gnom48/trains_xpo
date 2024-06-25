@@ -7,9 +7,10 @@ namespace trains.models
     /// Класс Car
     /// представляет собой модель данный с информацией о вагонах
     /// </summary>
-    public class Car: TrainsDbBaseXPObject
+    public class Car: BaseXPObject
     {
         public Car(Session session) : base(session) { }
+        public Car() { }
 
         private string carNumber;
 
@@ -46,7 +47,7 @@ namespace trains.models
         }
 
         [Association("Car-TrainsCars")]
-        public XPCollection<TrainsCars> TrainsCars => GetCollection<TrainsCars>(nameof(TrainsCars));
+        public XPCollection<TrainsCars> TrainsCars_ => GetCollection<TrainsCars>(nameof(TrainsCars_));
 
         private Invoice invoice;
 

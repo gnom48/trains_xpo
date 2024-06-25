@@ -7,9 +7,10 @@ namespace trains.models
     /// Класс Invoice
     /// представляет собой модель данный с информацией о накладных листах
     /// </summary>
-    public class Invoice: TrainsDbBaseXPObject
+    public class Invoice: BaseXPObject
     {
         public Invoice(Session session) : base(session) { }
+        public Invoice() { }
 
         private string invoiceName;
 

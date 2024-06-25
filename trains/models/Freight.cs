@@ -7,9 +7,10 @@ namespace trains.models
     /// Класс Freight
     /// представляет собой модель данный с информацией о грузах
     /// </summary>
-    public class Freight: TrainsDbBaseXPObject
+    public class Freight: BaseXPObject
     {
         public Freight(Session session) : base(session) { }
+        public Freight() { }
 
         private string freightName;
 

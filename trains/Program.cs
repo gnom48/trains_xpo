@@ -10,8 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using trains.models;
-using System.Runtime.Remoting.Contexts;
-using System.Diagnostics.Contracts;
+using DevExpress.Data.Filtering;
 
 namespace trains
 {
@@ -22,9 +21,10 @@ namespace trains
         static void Main(string[] args)
         {
             DbHelper.CreateDatabaseIfNotExists();
+            //DbHelper.LoadDataFromXml();
 
-            var data = GetDataForReportByLinq("2236", "86560-725-98470");
-            //GenerateExcelFileObjectFromPattern(data);
+            var data = GetDataForReportBySqlQuery("2236", "86560-725-98470");
+            GenerateExcelFileObjectFromPattern(data);
         }
 
         /// <summary>
@@ -212,114 +212,183 @@ namespace trains
         /// <returns>данные натурного листа</returns>
         public static List<OutputData> GetDataForReportByLinq(string trainNumber, string trainIndexCombined)
         {
-            return new List<OutputData>();
-            /*stopwatch.Reset();
+            stopwatch.Reset();
+            stopwatch.Start();
+            using (var uow = new UnitOfWork(DbHelper.dataLayer))
+            {
+                var lastHistories = uow.Query<History>().GroupBy(h => h.Car).Select(g => g.OrderByDescending(h => h.OperationDateTime).FirstOrDefault()).ToList();
 
-            IDataLayer dataLayer = XpoDefault.GetDataLayer(TrainsDbContext.connectionString, AutoCreateOption.None);
-            using (Session context = new Session(dataLayer))
+                var data = uow.Query<TrainsCars>().ToList()
+                    .Join(uow.Query<Train>().ToList(), tc => tc.Train.Oid, t => t.Oid, (left, rigth) => new
+                    {
+                        TrainId = rigth.Oid,
+                        TrainNumber = rigth.TrainNumber,
+                        TrainIndexCombined = rigth.TrainIndexCombined,
+                        CarPositionInTrain = left.CarPositionInTrain,
+                        CarId = left.Car.Oid
+                    })
+                    .Join(uow.Query<Car>().ToList(), tct => tct.CarId, c => c.Oid, (left, rigth) => new
+                    {
+                        TrainNumber = left.TrainNumber,
+                        TrainIndexCombined = left.TrainIndexCombined,
+                        CarNumber = rigth.CarNumber,
+                        CarId = rigth.Oid,
+                        InvoiceId = rigth.Invoice.Oid,
+                        GrossWeight = rigth.GrossWeight,
+                        FreightId = rigth.Freight.Oid,
+                        CarPositionInTrain = left.CarPositionInTrain
+                    })
+                    //.Join(uow.Query<History>().ToList().GroupBy(h => h.Car.Oid).Select(g => g.OrderByDescending(h => h.OperationDateTime).FirstOrDefault()), tctc => tctc.CarId, h => h.Car.Oid, (left, right) => new
+                    .Join(lastHistories, tctc => tctc.CarId, h => h.Car.Oid, (left, right) => new
+                    {
+                        TrainNumber = left.TrainNumber,
+                        TrainIndexCombined = left.TrainIndexCombined,
+                        CarNumber = left.CarNumber,
+                        InvoiceId = left.InvoiceId,
+                        GrossWeight = left.GrossWeight,
+                        FreightId = left.FreightId,
+                        OperationDateTime = right.OperationDateTime,
+                        OperationId = right.Operation.Oid,
+                        LastStationId = right.Station.Oid,
+                        CarPositionInTrain = left.CarPositionInTrain
+                    })
+                    .Join(uow.Query<Station>().ToList(), tctcho => tctcho.LastStationId, i => i.Oid, (left, right) => new
+                    {
+                        TrainNumber = left.TrainNumber,
+                        TrainIndexCombined = left.TrainIndexCombined,
+                        CarNumber = left.CarNumber,
+                        InvoiceId = left.InvoiceId,
+                        GrossWeight = left.GrossWeight,
+                        FreightId = left.FreightId,
+                        OperationDateTime = left.OperationDateTime,
+                        OperationId = left.OperationId,
+                        LastStationName = right.StationName,
+                        CarPositionInTrain = left.CarPositionInTrain
+                    })
+                    .Join(uow.Query<Operation>().ToList(), tctch => tctch.OperationId, o => o.Oid, (left, right) => new
+                    {
+                        TrainNumber = left.TrainNumber,
+                        TrainIndexCombined = left.TrainIndexCombined,
+                        CarNumber = left.CarNumber,
+                        InvoiceId = left.InvoiceId,
+                        GrossWeight = left.GrossWeight,
+                        FreightId = left.FreightId,
+                        OperationDateTime = left.OperationDateTime,
+                        OperationName = right.OperationName,
+                        LastStationName = left.LastStationName,
+                        CarPositionInTrain = left.CarPositionInTrain
+                    })
+                    .Join(uow.Query<Invoice>().ToList(), tctcho => tctcho.InvoiceId, i => i.Oid, (left, right) => new
+                    {
+                        TrainNumber = left.TrainNumber,
+                        TrainIndexCombined = left.TrainIndexCombined,
+                        CarNumber = left.CarNumber,
+                        InvoiceNum = right.InvoiceName,
+                        GrossFreightKg = left.GrossWeight,
+                        FreightId = left.FreightId,
+                        OperationDateTime = left.OperationDateTime,
+                        OperationName = left.OperationName,
+                        LastStationName = left.LastStationName,
+                        CarPositionInTrain = left.CarPositionInTrain
+                    })
+                    .Join(uow.Query<Freight>().ToList(), tctchoi => tctchoi.FreightId, f => f.Oid, (left, right) => new SelectResult
+                    {
+                        TrainNumber = left.TrainNumber,
+                        TrainIndexCombined = left.TrainIndexCombined,
+                        CarNumber = left.CarNumber,
+                        InvoiceName = left.InvoiceNum,
+                        GrossWeight = left.GrossFreightKg,
+                        StationName = left.LastStationName,
+                        FreightName = right.FreightName,
+                        LastOperationDateTime = left.OperationDateTime,
+                        OperationName = left.OperationName,
+                        CarPositionInTrain = left.CarPositionInTrain
+                    })
+                    .Where(x => x.TrainIndexCombined == trainIndexCombined && x.TrainNumber == trainNumber)
+                    .OrderBy(x => x.CarPositionInTrain).ThenBy(x => x.CarNumber)
+                    .ToList();
+
+                stopwatch.Stop();
+                Console.WriteLine($"Linq выборка заняла {stopwatch.ElapsedMilliseconds} мс");
+
+                return data.GroupBy(x => x.FreightName).Select(group => new OutputData
+                {
+                    GroupFreight = group.Key,
+                    TotalGroupWeight = group.Select(x => x.GrossWeight).Sum(),
+                    TotalGroupCount = group.Select(x => x.CarNumber).Count(),
+                    RecordsInGroup = group.OrderBy(x => x.CarPositionInTrain).ToList()
+                }).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Делает прямой Sql запрос к базе данных и получает данные в виде натурного листа указанного состава
+        /// </summary>
+        /// <param name="trainNumber">номер поезда</param>
+        /// <param name="trainIndexCombined">составной индекс состава</param>
+        /// <returns>данные натурного листа</returns>
+        public static List<OutputData> GetDataForReportBySqlQuery(string trainNumber, string trainIndexCombined)
+        {
+            stopwatch.Reset();
+
+            using (var uow = new UnitOfWork(DbHelper.dataLayer))
             {
                 stopwatch.Start();
-                using (var uow = new UnitOfWork(dataLayer))
+
+                var data = new List<SelectResult>();
+
+                var sqlRes = uow.ExecuteQuery($@"select t.TrainNumber, t.TrainIndexCombined, tc.CarPositionInTrain, 
+	                    c.CarNumber, h.LastOperationDateTime, c.GrossWeight, o.OperationName, 
+	                    i.InvoiceName, s.StationName, f.FreightName
+                    from dbo.TrainsCars as tc 
+                        inner join dbo.Car as c on (tc.Car = c.OID)
+                        inner join dbo.Train as t on (tc.Train = t.OID)
+                        inner join (select Car, max(OperationDateTime) as LastOperationDateTime,
+                            max(Operation) as Operation, 
+                            max(Station) as Station
+                            from dbo.History
+                            group by Car)  as h on (h.Car = c.OID)
+                        inner join dbo.Operation as o on (o.OID = h.Operation)
+                        inner join dbo.Station as s on (h.Station = s.OID)
+                        inner join dbo.Freight as f on (f.OID = c.Freight)
+                        inner join dbo.Invoice as i on (c.Invoice = i.OID)
+                    where t.TrainNumber = '{trainNumber}' and t.TrainIndexCombined = '{trainIndexCombined}'
+                    order by tc.CarPositionInTrain, c.CarNumber;
+                    ");
+
+                stopwatch.Stop();
+                Console.WriteLine($"Sql запрос занял {stopwatch.ElapsedMilliseconds} мс");
+
+                foreach(var val in sqlRes.ResultSet[0].Rows)
                 {
-                    var lastHistories = context.Query<History>().GroupBy(h => h.CarId).Select(g => g.OrderByDescending(h => h.OperationDateTime).FirstOrDefault()).ToList();
-                    
-                    var data = context.Query<TrainsCars>()
-                        .Join(context.Query<Train>(), tc => tc.TrainId, t => t.TrainId, (left, rigth) => new {
-                            TrainId = rigth.TrainId,
-                            TrainNumber = rigth.TrainNumber,
-                            TrainIndexCombined = rigth.TrainIndexCombined,
-                            CarPositionInTrain = left.CarPositionInTrain,
-                            CarId = left.CarId
-                        })
-                        .Join(context.Query<Car>(), tct => tct.CarId, c => c.CarId, (left, rigth) => new {
-                            TrainNumber = left.TrainNumber,
-                            TrainIndexCombined = left.TrainIndexCombined,
-                            CarNumber = rigth.CarNumber,
-                            CarId = rigth.CarId,
-                            InvoiceId = rigth.InvoiceId,
-                            GrossWeight = rigth.GrossWeight,
-                            FreightId = rigth.FreightId,
-                            CarPositionInTrain = left.CarPositionInTrain
-                        })
-                        .Join(context.Query<History>().GroupBy(h => h.CarId).Select(g => g.OrderByDescending(h => h.OperationDateTime).FirstOrDefault()), tctc => tctc.CarId, h => h.CarId, (left, right) => new {
-                            TrainNumber = left.TrainNumber,
-                            TrainIndexCombined = left.TrainIndexCombined,
-                            CarNumber = left.CarNumber,
-                            InvoiceId = left.InvoiceId,
-                            GrossWeight = left.GrossWeight,
-                            FreightId = left.FreightId,
-                            OperationDateTime = right.OperationDateTime,
-                            OperationId = right.OperationId,
-                            LastStationId = right.StationId,
-                            CarPositionInTrain = left.CarPositionInTrain
-                        })
-                        .Join(context.Query<Station>(), tctcho => tctcho.LastStationId, i => i.StationId, (left, right) => new {
-                            TrainNumber = left.TrainNumber,
-                            TrainIndexCombined = left.TrainIndexCombined,
-                            CarNumber = left.CarNumber,
-                            InvoiceId = left.InvoiceId,
-                            GrossWeight = left.GrossWeight,
-                            FreightId = left.FreightId,
-                            OperationDateTime = left.OperationDateTime,
-                            OperationId = left.OperationId,
-                            LastStationName = right.StationName,
-                            CarPositionInTrain = left.CarPositionInTrain
-                        })
-                        .Join(context.Query<Operation>(), tctch => tctch.OperationId, o => o.OperationId, (left, right) => new {
-                            TrainNumber = left.TrainNumber,
-                            TrainIndexCombined = left.TrainIndexCombined,
-                            CarNumber = left.CarNumber,
-                            InvoiceId = left.InvoiceId,
-                            GrossWeight = left.GrossWeight,
-                            FreightId = left.FreightId,
-                            OperationDateTime = left.OperationDateTime,
-                            OperationName = right.OperationName,
-                            LastStationName = left.LastStationName,
-                            CarPositionInTrain = left.CarPositionInTrain
-                        })
-                        .Join(context.Query<Invoice>(), tctcho => tctcho.InvoiceId, i => i.InvoiceId, (left, right) => new {
-                            TrainNumber = left.TrainNumber,
-                            TrainIndexCombined = left.TrainIndexCombined,
-                            CarNumber = left.CarNumber,
-                            InvoiceNum = right.InvoiceName,
-                            GrossFreightKg = left.GrossWeight,
-                            FreightId = left.FreightId,
-                            OperationDateTime = left.OperationDateTime,
-                            OperationName = left.OperationName,
-                            LastStationName = left.LastStationName,
-                            CarPositionInTrain = left.CarPositionInTrain
-                        })
-                        .Join(context.Query<Freight>(), tctchoi => tctchoi.FreightId, f => f.FreightId, (left, right) => new SelectResult
-                        {
-                            TrainNumber = left.TrainNumber,
-                            TrainIndexCombined = left.TrainIndexCombined,
-                            CarNumber = left.CarNumber,
-                            InvoiceName = left.InvoiceNum,
-                            GrossWeight = left.GrossFreightKg,
-                            StationName = left.LastStationName,
-                            FreightName = right.FreightName,
-                            LastOperationDateTime = left.OperationDateTime,
-                            OperationName = left.OperationName,
-                            CarPositionInTrain = left.CarPositionInTrain
-                        })
-                        .Where(x => x.TrainIndexCombined == trainIndexCombined && x.TrainNumber == trainNumber)
-                        .OrderBy(x => x.CarPositionInTrain).ThenBy(x => x.CarNumber)
-                        .ToList();
-
-                    stopwatch.Stop();
-                    Console.WriteLine($"Linq выборка заняла {stopwatch.ElapsedMilliseconds} мс");
-
-                    return data.GroupBy(x => x.FreightName).Select(group => new OutputData
+                    data.Add(new SelectResult
                     {
-                        GroupFreight = group.Key,
-                        TotalGroupWeight = group.Select(x => x.GrossWeight).Sum(),
-                        TotalGroupCount = group.Select(x => x.CarNumber).Count(),
-                        RecordsInGroup = group.OrderBy(x => x.CarPositionInTrain).ToList()
-                    }).ToList(); 
+                        TrainNumber = val.XmlValues[0].ToString(),
+                        TrainIndexCombined = val.XmlValues[1].ToString(),
+                        CarPositionInTrain = (int)val.XmlValues[2],
+                        CarNumber = val.XmlValues[3].ToString(),
+                        LastOperationDateTime = DateTime.Parse(val.XmlValues[4].ToString()),
+                        GrossWeight = (int)val.XmlValues[5],
+                        OperationName = val.XmlValues[6].ToString(),
+                        InvoiceName = val.XmlValues[7].ToString(),
+                        StationName = val.XmlValues[8].ToString(),
+                        FreightName = val.XmlValues[9].ToString(),
+                    });
+                    
                 }
-            }*/
+
+                return data.GroupBy(x => x.FreightName).Select(group => new OutputData
+                {
+                    GroupFreight = group.Key,
+                    TotalGroupWeight = group.Select(x => x.GrossWeight).Sum(),
+                    TotalGroupCount = group.Select(x => x.CarNumber).Count(),
+                    RecordsInGroup = group.OrderBy(x => x.CarPositionInTrain).ToList()
+                }).ToList();
+
+                return new List<OutputData>();
+            }
         }
-    
+
         /// <summary>
         /// Выводит отчет на основании натурного листа поезда в консоль
         /// </summary>

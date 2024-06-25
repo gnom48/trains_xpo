@@ -8,9 +8,10 @@ namespace trains.models
     /// Класс Station
     /// представляет собой модель данных с информацией о поездах-составах
     /// </summary>
-    public class Train: TrainsDbBaseXPObject
+    public class Train: BaseXPObject
     {
         public Train(Session session) : base(session) { }
+        public Train() { }
 
         /// <summary>
         /// Номер поезда
@@ -73,6 +74,6 @@ namespace trains.models
         }
 
         [Association("Train-TrainsCars")]
-        public XPCollection<TrainsCars> TrainsCars => GetCollection<TrainsCars>(nameof(TrainsCars));
+        public XPCollection<TrainsCars> TrainsCars_ => GetCollection<TrainsCars>(nameof(TrainsCars_));
     }
 }
