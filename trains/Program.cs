@@ -1,5 +1,4 @@
-﻿using DevExpress.Xpo.DB;
-using DevExpress.Xpo;
+﻿using DevExpress.Xpo;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
@@ -19,14 +18,15 @@ namespace trains
         static void Main(string[] args)
         {
             DbHelper.CreateDatabaseIfNotExists(); // нужно использовать для инициализации dataLayer в DbHelper
-            //DbHelper.DeleteData();
-            //DbHelper.LoadDataFromXml();
+            DbHelper.DeleteData();
+            DbHelper.LoadDataFromXml();
 
-            var data = GetDataForReportBySqlQuery("2236", "86560-725-98470");
-            data = GetDataForReportByLinqLite("2236", "86560-725-98470");
-            data = GetDataForReportByLinq("2236", "86560-725-98470");
-            Console.ReadKey();
+            //var data = GetDataForReportBySqlQuery("2236", "86560-725-98470");
+            //var data = GetDataForReportByLinqLite("2236", "86560-725-98470");
+            //var data = GetDataForReportByLinq("2236", "86560-725-98470");
+
             //GenerateExcelFileObjectFromPattern(data);
+            Console.ReadKey();
         }
 
         /// <summary>
@@ -334,9 +334,9 @@ namespace trains
             stopwatch.Start();
             using (var uow = new UnitOfWork(DbHelper.dataLayer))
             {
-                var lastHistories = uow.Query<History>().GroupBy(h => h.Car).Select(g => g.OrderByDescending(h => h.OperationDateTime).FirstOrDefault()).ToList();
+                var lastHistories = uow.Query<History>().Where(x => x.Car.TrainsCars_.Any(t => t.Train.TrainIndexCombined == trainIndexCombined && t.Train.TrainNumber == trainNumber)).GroupBy(h => h.Car).Select(g => g.OrderByDescending(h => h.OperationDateTime).FirstOrDefault()).ToList();
 
-                List<SelectResult> data = uow.Query<TrainsCars>().Select(x => new SelectResult
+                List<SelectResult> data = uow.Query<TrainsCars>().Where(x => x.Train.TrainIndexCombined == trainIndexCombined && x.Train.TrainNumber == trainNumber).Select(x => new SelectResult
                 {
                     CarPositionInTrain = x.CarPositionInTrain,
                     CarNumber = x.Car.CarNumber,
@@ -345,12 +345,12 @@ namespace trains
                     FreightName = x.Car.Freight.FreightName,
                     GrossWeight = x.Car.GrossWeight,
                     InvoiceName = x.Car.Invoice.InvoiceName,
-                    LastOperationDateTime = lastHistories.Single(h => h.Car.Oid == x.Car.Oid).OperationDateTime,
-                    OperationName = lastHistories.Single(h => h.Car.Oid == x.Car.Oid).Operation.OperationName,
-                    StationName = lastHistories.Single(h => h.Car.Oid == x.Car.Oid).Station.StationName
+                    LastOperationDateTime = lastHistories.SingleOrDefault(h => h.Car.Oid == x.Car.Oid).OperationDateTime,
+                    OperationName = lastHistories.SingleOrDefault(h => h.Car.Oid == x.Car.Oid).Operation.OperationName,
+                    StationName = lastHistories.SingleOrDefault(h => h.Car.Oid == x.Car.Oid).Station.StationName
                 }).ToList();
                     
-                data = data.Where(x => x.TrainIndexCombined == trainIndexCombined && x.TrainNumber == trainNumber)
+                data = data
                 .OrderBy(x => x.CarPositionInTrain).ThenBy(x => x.CarNumber)
                 .ToList();
 
