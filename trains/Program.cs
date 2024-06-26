@@ -4,13 +4,11 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using trains.models;
-using DevExpress.Data.Filtering;
 
 namespace trains
 {
@@ -20,10 +18,15 @@ namespace trains
 
         static void Main(string[] args)
         {
-            DbHelper.CreateDatabaseIfNotExists();
+            DbHelper.CreateDatabaseIfNotExists(); // нужно использовать для инициализации dataLayer в DbHelper
+            //DbHelper.DeleteData();
+            //DbHelper.LoadDataFromXml();
 
             var data = GetDataForReportBySqlQuery("2236", "86560-725-98470");
-            GenerateExcelFileObjectFromPattern(data);
+            data = GetDataForReportByLinqLite("2236", "86560-725-98470");
+            data = GetDataForReportByLinq("2236", "86560-725-98470");
+            Console.ReadKey();
+            //GenerateExcelFileObjectFromPattern(data);
         }
 
         /// <summary>
@@ -237,7 +240,6 @@ namespace trains
                         FreightId = rigth.Freight.Oid,
                         CarPositionInTrain = left.CarPositionInTrain
                     })
-                    //.Join(uow.Query<History>().ToList().GroupBy(h => h.Car.Oid).Select(g => g.OrderByDescending(h => h.OperationDateTime).FirstOrDefault()), tctc => tctc.CarId, h => h.Car.Oid, (left, right) => new
                     .Join(lastHistories, tctc => tctc.CarId, h => h.Car.Oid, (left, right) => new
                     {
                         TrainNumber = left.TrainNumber,
@@ -309,6 +311,51 @@ namespace trains
 
                 stopwatch.Stop();
                 Console.WriteLine($"Linq выборка заняла {stopwatch.ElapsedMilliseconds} мс");
+
+                return data.GroupBy(x => x.FreightName).Select(group => new OutputData
+                {
+                    GroupFreight = group.Key,
+                    TotalGroupWeight = group.Select(x => x.GrossWeight).Sum(),
+                    TotalGroupCount = group.Select(x => x.CarNumber).Count(),
+                    RecordsInGroup = group.OrderBy(x => x.CarPositionInTrain).ToList()
+                }).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Делает запрос к базе данных с помощью Linq и получает данные в виде натурного листа указанного состава (оптимизировано)
+        /// </summary>
+        /// <param name="trainNumber">номер поезда</param>
+        /// <param name="trainIndexCombined">составной индекс состава</param>
+        /// <returns>данные натурного листа</returns>
+        public static List<OutputData> GetDataForReportByLinqLite(string trainNumber, string trainIndexCombined)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            using (var uow = new UnitOfWork(DbHelper.dataLayer))
+            {
+                var lastHistories = uow.Query<History>().GroupBy(h => h.Car).Select(g => g.OrderByDescending(h => h.OperationDateTime).FirstOrDefault()).ToList();
+
+                List<SelectResult> data = uow.Query<TrainsCars>().Select(x => new SelectResult
+                {
+                    CarPositionInTrain = x.CarPositionInTrain,
+                    CarNumber = x.Car.CarNumber,
+                    TrainNumber = x.Train.TrainNumber,
+                    TrainIndexCombined = x.Train.TrainIndexCombined,
+                    FreightName = x.Car.Freight.FreightName,
+                    GrossWeight = x.Car.GrossWeight,
+                    InvoiceName = x.Car.Invoice.InvoiceName,
+                    LastOperationDateTime = lastHistories.Single(h => h.Car.Oid == x.Car.Oid).OperationDateTime,
+                    OperationName = lastHistories.Single(h => h.Car.Oid == x.Car.Oid).Operation.OperationName,
+                    StationName = lastHistories.Single(h => h.Car.Oid == x.Car.Oid).Station.StationName
+                }).ToList();
+                    
+                data = data.Where(x => x.TrainIndexCombined == trainIndexCombined && x.TrainNumber == trainNumber)
+                .OrderBy(x => x.CarPositionInTrain).ThenBy(x => x.CarNumber)
+                .ToList();
+
+                stopwatch.Stop();
+                Console.WriteLine($"Сокращенная Linq выборка заняла {stopwatch.ElapsedMilliseconds} мс");
 
                 return data.GroupBy(x => x.FreightName).Select(group => new OutputData
                 {

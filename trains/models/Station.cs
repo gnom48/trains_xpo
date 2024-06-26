@@ -34,12 +34,15 @@ namespace trains.models
         }
 
         [Association("Station-Histories")]
+        [Aggregated]
         public XPCollection<History> Histories => GetCollection<History>(nameof(Histories));
 
         [Association("Station-FromTrains")]
+        [Aggregated]
         public XPCollection<Train> FromTrains => GetCollection<Train>(nameof(FromTrains));
 
         [Association("Station-ToTrains")]
+        [Aggregated]
         public XPCollection<Train> ToTrains => GetCollection<Train>(nameof(ToTrains));
     }
 }

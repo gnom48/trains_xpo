@@ -22,6 +22,8 @@ namespace trains
 
         public static IDataLayer dataLayer;
 
+        private static Stopwatch stopwatch = new Stopwatch();
+
         /// <summary>
         /// Создает новую базу данных, если не существует, иначе ничего не делает
         /// </summary>
@@ -50,6 +52,9 @@ namespace trains
         /// <param name="filename">путь до файла с данными в формате XML (необязательный, по умолчанию тестовые данные)</param>
         public static void LoadDataFromXml(string filename = @"\resources\Data.xml")
         {
+            stopwatch.Reset();
+            stopwatch.Start();
+
             // построчное чтение файла
             StringBuilder xml = new StringBuilder();
             using (var fs = new StreamReader(Directory.GetCurrentDirectory() + filename))
@@ -175,6 +180,9 @@ namespace trains
 
                 uow.CommitChanges();
             }
+
+            stopwatch.Stop();
+            Console.WriteLine($"Импорт данных занял {stopwatch.ElapsedMilliseconds} мс");
         }
 
         /// <summary>
@@ -182,13 +190,30 @@ namespace trains
         /// </summary>
         public static void DeleteData()
         {
+            stopwatch.Reset();
+            stopwatch.Start();
             using (var uow = new UnitOfWork(dataLayer))
             {
-                uow.ExecuteNonQuery("TRUNCATE TABLE dbo.TrainsCars");
-                uow.ExecuteNonQuery("TRUNCATE TABLE dbo.Trains");
-                uow.ExecuteNonQuery("TRUNCATE TABLE dbo.Cars");
-                uow.ExecuteNonQuery("TRUNCATE TABLE dbo.Histories");
+                uow.ExecuteNonQuery("delete from dbo.TrainsCars;");
+                uow.ExecuteNonQuery("DBCC CHECKIDENT ('TrainsCars', RESEED, 0);");
+                uow.ExecuteNonQuery("delete from dbo.History");
+                uow.ExecuteNonQuery("DBCC CHECKIDENT ('History', RESEED, 0);");
+                uow.ExecuteNonQuery("delete from dbo.Train");
+                uow.ExecuteNonQuery("DBCC CHECKIDENT ('Train', RESEED, 0);");
+                uow.ExecuteNonQuery("delete from dbo.Car");
+                uow.ExecuteNonQuery("DBCC CHECKIDENT ('Car', RESEED, 0);");
+                uow.ExecuteNonQuery("delete from dbo.Invoice");
+                uow.ExecuteNonQuery("DBCC CHECKIDENT ('Invoice', RESEED, 0);");
+                uow.ExecuteNonQuery("delete from dbo.Freight");
+                uow.ExecuteNonQuery("DBCC CHECKIDENT ('Freight', RESEED, 0);");
+                uow.ExecuteNonQuery("delete from dbo.Station");
+                uow.ExecuteNonQuery("DBCC CHECKIDENT ('Station', RESEED, 0);");
+                uow.ExecuteNonQuery("delete from dbo.Operation");
+                uow.ExecuteNonQuery("DBCC CHECKIDENT ('Operation', RESEED, 0);");
+                uow.CommitChanges();
             }
+            stopwatch.Stop();
+            Console.WriteLine($"Очистка данных заняла {stopwatch.ElapsedMilliseconds} мс");
         }
     }
 }

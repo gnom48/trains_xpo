@@ -30,6 +30,7 @@ namespace trains.models
         }
 
         [Association("Invoice-Cars")]
+        [Aggregated]
         public XPCollection<Car> Cars => GetCollection<Car>(nameof(Cars));
     }
 }

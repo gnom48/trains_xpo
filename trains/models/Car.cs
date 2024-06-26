@@ -85,6 +85,7 @@ namespace trains.models
         }
 
         [Association("Car-Histories")]
+        [Aggregated]
         public XPCollection<History> Histories => GetCollection<History>(nameof(Histories));
     }
 }
