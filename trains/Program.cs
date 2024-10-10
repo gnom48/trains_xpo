@@ -22,10 +22,10 @@ namespace trains
             DbHelper.LoadDataFromXml();
 
             //var data = GetDataForReportBySqlQuery("2236", "86560-725-98470");
-            //var data = GetDataForReportByLinqLite("2236", "86560-725-98470");
-            //var data = GetDataForReportByLinq("2236", "86560-725-98470");
+            var data = GetDataForReportByLinqLite("2236", "86560-725-98470");
+            //data = GetDataForReportByLinq("2236", "86560-725-98470");
 
-            //GenerateExcelFileObjectFromPattern(data);
+            GenerateExcelFileObjectFromPattern(data);
             Console.ReadKey();
         }
 

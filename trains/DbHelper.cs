@@ -18,7 +18,7 @@ namespace trains
     /// </summary>
     public class DbHelper
     {
-        public static string connectionString = MSSqlConnectionProvider.GetConnectionString(@".\SQLEXPRESS", "trains_xpo");
+        public static string connectionString = MSSqlConnectionProvider.GetConnectionString(@".\SQLEXPRESS", "trains_xpo_1");
 
         public static IDataLayer dataLayer;
 
@@ -82,35 +82,35 @@ namespace trains
             var uniqueTrainsCarsNums = root.Rows.Select(x => $"{x.CarNumber}_{x.TrainNumber}_{x.TrainIndexCombined}").ToList();
             uniqueTrainsCarsNums = uniqueTrainsCarsNums.Distinct().ToList();
 
-            var freights = new List<Freight>();
-            var operations = new List<Operation>();
-            var stations = new List<Station>();
-            var invoices = new List<Invoice>();
+            var freights = new List<string>();
+            var operations = new List<string>();
+            var stations = new List<string>();
+            var invoices = new List<string>();
 
             // заполнение таблиц-справочников
             foreach (var r in root.Rows)
             {
-                freights.Add(new Freight { FreightName = r.FreightEtsngName });
-                operations.Add(new Operation { OperationName = r.LastOperationName });
-                stations.Add(new Station { StationName = r.LastStationName });
-                stations.Add(new Station { StationName = r.FromStationName });
-                stations.Add(new Station { StationName = r.ToStationName });
-                invoices.Add(new Invoice { InvoiceName = r.InvoiceNum });
+                freights.Add(r.FreightEtsngName);
+                operations.Add(r.LastOperationName);
+                stations.Add(r.LastStationName);
+                stations.Add(r.FromStationName);
+                stations.Add(r.ToStationName);
+                invoices.Add(r.InvoiceNum);
             }
 
             // удаление дублирующихся записей из справочников
-            freights = freights.GroupBy(x => x.FreightName).Select(g => g.First()).ToList();
-            operations = operations.GroupBy(x => x.OperationName).Select(g => g.First()).ToList();
-            invoices = invoices.GroupBy(x => x.InvoiceName).Select(g => g.First()).ToList();
-            stations = stations.GroupBy(x => x.StationName).Select(g => g.First()).ToList();
+            freights = freights.Distinct().ToList();
+            operations = operations.Distinct().ToList();
+            invoices = invoices.Distinct().ToList();
+            stations = stations.Distinct().ToList();
 
             using (var uow = new UnitOfWork(dataLayer))
             {
                 // запись справочников в базу данных
-                freights.ForEach(x => { var tmp = new Freight(uow); tmp.FreightName = x.FreightName; });
-                operations.ForEach(x => { var tmp = new Operation(uow); tmp.OperationName = x.OperationName; });
-                invoices.ForEach(x => { var tmp = new Invoice(uow); tmp.InvoiceName = x.InvoiceName; });
-                stations.ForEach(x => { var tmp = new Station(uow); tmp.StationName = x.StationName; });
+                freights.ForEach(x => new Freight(uow) { FreightName = x });
+                operations.ForEach(x => new Operation(uow) { OperationName = x });
+                invoices.ForEach(x => new Invoice(uow) { InvoiceName = x });
+                stations.ForEach(x => new Station(uow) { StationName = x });
                 uow.CommitChanges();
 
                 // заполнение зависимых таблиц
